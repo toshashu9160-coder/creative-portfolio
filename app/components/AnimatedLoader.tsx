@@ -86,7 +86,7 @@ export default function AnimatedLoader({
     });
 
     const counter = { val: 0 };
-    const duration = 4.0; // smoother and slower loader
+    const duration = 7.0; // extremely slow and majestic loader
 
     // Animate counter and update counts & wordIndex in sync
     tl.to(

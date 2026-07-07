@@ -22,6 +22,8 @@ export default function FeaturedProjects({ onProjectClick }: FeaturedProjectsPro
   }, []);
 
   useEffect(() => {
+    if (works.length === 0) return;
+
     const ctx = gsap.context(() => {
       // Parallax the image inside each card based on scroll
       cardsRef.current.forEach((card) => {
@@ -47,7 +49,7 @@ export default function FeaturedProjects({ onProjectClick }: FeaturedProjectsPro
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [works]);
 
   return (
     <section
@@ -59,7 +61,8 @@ export default function FeaturedProjects({ onProjectClick }: FeaturedProjectsPro
       <h2 className="section-title">Selected Projects</h2>
 
       <div style={{ marginTop: "1rem" }}>
-        <ScrollStack
+        {works.length > 0 && (
+          <ScrollStack
           useWindowScroll={true}
           itemDistance={100}
           itemStackDistance={30}
@@ -118,6 +121,7 @@ export default function FeaturedProjects({ onProjectClick }: FeaturedProjectsPro
             </ScrollStackItem>
           ))}
         </ScrollStack>
+        )}
       </div>
     </section>
   );

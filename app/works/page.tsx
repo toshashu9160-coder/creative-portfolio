@@ -1,15 +1,20 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { works } from "./data";
+import { fetchWorks, Work } from "./data";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function WorksPage() {
   const headerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [works, setWorks] = useState<Work[]>([]);
+
+  useEffect(() => {
+    fetchWorks().then(setWorks);
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {

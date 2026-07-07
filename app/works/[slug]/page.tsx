@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { notFound } from "next/navigation";
 import { use } from "react";
 import Link from "next/link";
 import gsap from "gsap";
-import { works } from "../data";
+import { fetchWorks, Work } from "../data";
 
 export default function WorkDetailPage({
   params,
@@ -12,7 +12,16 @@ export default function WorkDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-  const work = works.find((w) => w.slug === slug);
+  const [work, setWork] = useState<Work | null | undefined>(undefined);
+
+  useEffect(() => {
+    fetchWorks().then(all => {
+      setWork(all.find(w => w.slug === slug) || null);
+    });
+  }, [slug]);
+
+  if (work === undefined) return null; // Wait for data to load
+  if (work === null) notFound();
 
   const contentRef = useRef<HTMLDivElement>(null);
 

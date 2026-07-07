@@ -1,12 +1,10 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { works } from "../works/data";
+import { fetchWorks, Work } from "../works/data";
 import ScrollStack, { ScrollStackItem } from "./ScrollStack";
-
-import { Work } from "../works/data";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,6 +15,11 @@ interface FeaturedProjectsProps {
 export default function FeaturedProjects({ onProjectClick }: FeaturedProjectsProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [works, setWorks] = useState<Work[]>([]);
+
+  useEffect(() => {
+    fetchWorks().then(setWorks);
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {

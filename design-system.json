@@ -1,0 +1,22 @@
+{
+  "colors": {
+    "primary": {
+      "light": "#d4af37",
+      "dark": "#b8860b"
+    },
+    "secondary": {
+      "light": "#222222",
+      "dark": "#111111"
+    },
+    "accent": "#ff9800"
+  },
+  "fontFamily": {
+    "sans": ["Inter", "system-ui", "sans-serif"],
+    "display": ["Inter", "system-ui", "sans-serif"]
+  },
+  "fontWeight": {
+    "regular": "400",
+    "medium": "500",
+    "bold": "700"
+  }
+}

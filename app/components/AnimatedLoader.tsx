@@ -133,6 +133,26 @@ export default function AnimatedLoader({
     };
   }, [onComplete]);
 
+  useEffect(() => {
+    // Stop scrolling on mount
+    const globalLenis = (window as any).lenis;
+    if (globalLenis) {
+      globalLenis.stop();
+    }
+
+    return () => {
+      // Resume scrolling on unmount (after screen slides out and component is destroyed)
+      if (globalLenis) {
+        globalLenis.start();
+        // Recalculate dimensions and dispatch window resize to align elements
+        setTimeout(() => {
+          globalLenis.resize();
+          window.dispatchEvent(new Event("resize"));
+        }, 100);
+      }
+    };
+  }, []);
+
   return (
     <div ref={screenRef} className="loader-screen">
       <div ref={wordsContainerRef} className="loader-hello-container">

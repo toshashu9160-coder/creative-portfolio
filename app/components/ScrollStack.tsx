@@ -90,6 +90,17 @@ const ScrollStack = ({
   const measureLayout = useCallback(() => {
     if (!cardsRef.current.length) return;
 
+    // Helper to get absolute offset top from the document root, immune to scroll position
+    const getAbsoluteOffsetTop = (el: HTMLElement) => {
+      let top = 0;
+      let current: HTMLElement | null = el;
+      while (current) {
+        top += current.offsetTop;
+        current = current.offsetParent as HTMLElement | null;
+      }
+      return top;
+    };
+
     // 1. Temporarily clear transforms to measure true layout offsets
     const cachedStyles = cardsRef.current.map((card) => {
       if (!card) return { transform: "", filter: "" };
@@ -106,8 +117,7 @@ const ScrollStack = ({
     cardsRef.current.forEach((card, i) => {
       if (card) {
         if (useWindowScroll) {
-          const rect = card.getBoundingClientRect();
-          cardOffsetsRef.current[i] = rect.top + window.scrollY;
+          cardOffsetsRef.current[i] = getAbsoluteOffsetTop(card);
         } else {
           cardOffsetsRef.current[i] = card.offsetTop;
         }
@@ -121,8 +131,7 @@ const ScrollStack = ({
 
     if (endElement) {
       if (useWindowScroll) {
-        const rect = endElement.getBoundingClientRect();
-        endOffsetRef.current = rect.top + window.scrollY;
+        endOffsetRef.current = getAbsoluteOffsetTop(endElement);
       } else {
         endOffsetRef.current = endElement.offsetTop;
       }
@@ -324,9 +333,15 @@ const ScrollStack = ({
     });
     observer.observe(document.body);
 
+    // Call measurement updates after delays on initial mount to catch dynamic layout shifts
+    const timer1 = setTimeout(handleResize, 150);
+    const timer2 = setTimeout(handleResize, 1000);
+
     return () => {
       window.removeEventListener("resize", handleResize);
       observer.disconnect();
+      clearTimeout(timer1);
+      clearTimeout(timer2);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }

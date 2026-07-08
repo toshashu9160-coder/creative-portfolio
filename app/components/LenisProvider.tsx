@@ -3,6 +3,10 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function LenisProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -20,15 +24,26 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
     lenisRef.current = lenis;
     (window as any).lenis = lenis;
 
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
+    // Start in stopped state if loader is active
+    const hasLoader = document.querySelector(".loader-screen") !== null;
+    if (hasLoader) {
+      lenis.stop();
     }
-    rafId = requestAnimationFrame(raf);
+
+    // Connect Lenis to ScrollTrigger
+    lenis.on("scroll", () => {
+      ScrollTrigger.update();
+    });
+
+    // Run Lenis tick in GSAP ticker for perfect sync
+    const updateLenis = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+    gsap.ticker.add(updateLenis);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      gsap.ticker.remove(updateLenis);
       lenis.destroy();
       if ((window as any).lenis === lenis) {
         (window as any).lenis = undefined;

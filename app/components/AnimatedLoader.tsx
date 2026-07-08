@@ -48,8 +48,8 @@ export default function AnimatedLoader({
             y: "0%",
             opacity: 1,
             rotateX: 0,
-            duration: 0.28,
-            stagger: 0.02,
+            duration: 0.35,
+            stagger: 0.025,
             ease: "power2.out",
           }
         );
@@ -64,7 +64,7 @@ export default function AnimatedLoader({
       gsap.fromTo(
         langLabelRef.current,
         { opacity: 0, y: 5 },
-        { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
       );
     }
   }, [wordIndex]);
@@ -85,37 +85,45 @@ export default function AnimatedLoader({
       },
     });
 
-    const counter = { val: 0 };
-    const duration = 7.0; // extremely slow and majestic loader
+    const duration = 9.9; // Slower animation loader (0.9s per word)
 
-    // Animate counter and update counts & wordIndex in sync
+    // Animate words smoothly and linearly (linked to main timeline)
+    const wordTracker = { val: 0 };
     tl.to(
-      counter,
+      wordTracker,
       {
-        val: 100,
+        val: HELLO_WORDS.length,
         duration,
-        ease: "power2.out",
+        ease: "none",
         onUpdate: () => {
-          const currentVal = Math.round(counter.val);
-          setCount(currentVal);
-
-          const index = Math.min(
-            Math.floor((counter.val / 100) * HELLO_WORDS.length),
-            HELLO_WORDS.length - 1
-          );
-          setWordIndex(index);
+          setWordIndex(Math.min(Math.floor(wordTracker.val), HELLO_WORDS.length - 1));
         },
       },
       0
     );
 
-    // Animate line progress
+    // Animate counter from 000 to 100 (unlinked, runs faster: 3.0s)
+    const counterObj = { val: 0 };
+    tl.to(
+      counterObj,
+      {
+        val: 100,
+        duration: 3.0,
+        ease: "power1.inOut",
+        onUpdate: () => {
+          setCount(Math.round(counterObj.val));
+        },
+      },
+      0
+    );
+
+    // Animate line progress (unlinked, matches counter: 3.0s)
     tl.to(
       line,
       {
         width: "100%",
-        duration,
-        ease: "power2.out",
+        duration: 3.0,
+        ease: "power1.inOut",
       },
       0
     );

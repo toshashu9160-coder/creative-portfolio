@@ -24,6 +24,11 @@ export default function FeaturedProjects({ onProjectClick }: FeaturedProjectsPro
   useEffect(() => {
     if (works.length === 0) return;
 
+    // Refresh ScrollTrigger to recalculate page height after dynamic elements mount
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+
     const ctx = gsap.context(() => {
       // Parallax the image inside each card based on scroll
       cardsRef.current.forEach((card) => {

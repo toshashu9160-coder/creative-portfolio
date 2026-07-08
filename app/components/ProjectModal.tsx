@@ -13,12 +13,32 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
   // Lock background scroll and show native cursor when modal is open
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     document.documentElement.classList.add("modal-open");
+
+    // Pause global Lenis scroll if available to prevent background scrolling
+    const globalLenis = (window as any).lenis;
+    if (globalLenis) {
+      globalLenis.stop();
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       document.documentElement.classList.remove("modal-open");
+      document.removeEventListener("keydown", handleKeyDown);
+
+      // Resume global Lenis scroll if available
+      if (globalLenis) {
+        globalLenis.start();
+      }
     };
-  }, []);
+  }, [onClose]);
 
   return (
     <motion.div
@@ -149,6 +169,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 loading="lazy"
                 allow="clipboard-write"
                 referrerPolicy="strict-origin-when-cross-origin"
+                sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
               />
             </div>
           ) : (

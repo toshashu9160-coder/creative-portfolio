@@ -139,6 +139,10 @@ a, button {
   cursor: auto !important;
 }
 
+.modal-open {
+  overflow: hidden;
+}
+
 .modal-open .custom-cursor,
 .modal-open .custom-cursor-dot {
   display: none !important;

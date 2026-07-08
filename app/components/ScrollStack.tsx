@@ -319,8 +319,14 @@ const ScrollStack = ({
 
     window.addEventListener("resize", handleResize);
 
+    const observer = new ResizeObserver(() => {
+      handleResize();
+    });
+    observer.observe(document.body);
+
     return () => {
       window.removeEventListener("resize", handleResize);
+      observer.disconnect();
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }

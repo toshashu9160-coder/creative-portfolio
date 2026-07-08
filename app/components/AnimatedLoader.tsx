@@ -142,11 +142,12 @@ export default function AnimatedLoader({
 
     return () => {
       // Resume scrolling on unmount (after screen slides out and component is destroyed)
-      if (globalLenis) {
-        globalLenis.start();
+      const activeLenis = (window as any).lenis;
+      if (activeLenis) {
+        activeLenis.start();
         // Recalculate dimensions and dispatch window resize to align elements
         setTimeout(() => {
-          globalLenis.resize();
+          activeLenis.resize();
           window.dispatchEvent(new Event("resize"));
         }, 100);
       }

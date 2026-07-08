@@ -34,8 +34,9 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
       document.removeEventListener("keydown", handleKeyDown);
 
       // Resume global Lenis scroll if available
-      if (globalLenis) {
-        globalLenis.start();
+      const activeLenis = (window as any).lenis;
+      if (activeLenis) {
+        activeLenis.start();
       }
     };
   }, [onClose]);
